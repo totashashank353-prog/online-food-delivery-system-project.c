@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <string.h>
-
-// -------------------- MENU SYSTEM STRUCTURES --------------------
+#include <stdlib.h>
+#include <math.h>
 struct MenuItem {
     char name[50];
     int price;
 };
 
 struct MenuItem menuItems[] = {
-    {"Pizza", 199},
-    {"Burger", 99},
-    {"Biryani", 249},
-    {"Coke", 39}
+    {"Pizza",199},
+    {"Burger",99},
+    {"Biryani",249},
+    {"Coke",39}
 };
 
 int menuSize = 4;
@@ -24,8 +24,6 @@ struct CartItem {
 
 struct CartItem cart[20];
 int cartCount = 0;
-
-// -------------------- CART FUNCTIONS --------------------
 int findItem(char item[]) {
     for (int i = 0; i < cartCount; i++) {
         if (strcmp(cart[i].name, item) == 0) {
@@ -57,7 +55,7 @@ void viewCart() {
 
     printf("\n------ YOUR CART ------\n");
     for (int i = 0; i < cartCount; i++) {
-        printf("%d. %s x%d = ₹%d\n",
+        printf("%d. %s x%d = Rs.%d\n",
             i + 1,
             cart[i].name,
             cart[i].quantity,
@@ -85,7 +83,6 @@ void cancelItem() {
 
     printf("Item removed\n");
 }
-
 void checkout() {
     float total = 0;
 
@@ -93,7 +90,7 @@ void checkout() {
 
     for (int i = 0; i < cartCount; i++) {
         int itemTotal = cart[i].price * cart[i].quantity;
-        printf("%s x%d = ₹%d\n", cart[i].name, cart[i].quantity, itemTotal);
+        printf("%s x%d = Rs.%d\n", cart[i].name, cart[i].quantity, itemTotal);
         total += itemTotal;
     }
 
@@ -103,12 +100,12 @@ void checkout() {
 
     float grandTotal = total + handling + delivery + gst;
 
-    printf("\nItems Total       : ₹%.2f", total);
-    printf("\nHandling Charges  : ₹%.2f", handling);
-    printf("\nDelivery Charges  : ₹%.2f", delivery);
-    printf("\nGST (5%%)          : ₹%.2f", gst);
+    printf("\nItems Total       : Rs. %.2f", total);
+    printf("\nHandling Charges  : Rs. %.2f", handling);
+    printf("\nDelivery Charges  : Rs. %.2f", delivery);
+    printf("\nGST (5%%)          : Rs. %.2f", gst);
     printf("\n-----------------------------");
-    printf("\nGrand Total       : ₹%.2f\n", grandTotal);
+    printf("\nGrand Total       : Rs. %.2f\n", grandTotal);
 
     int c;
     printf("\n1. Order Now");
@@ -130,7 +127,7 @@ void menu() {
     while (1) {
         printf("\n------ MENU ------\n");
         for (int i = 0; i < menuSize; i++) {
-            printf("%d. %s - ₹%d\n", i + 1, menuItems[i].name, menuItems[i].price);
+            printf("%d. %s - Rs.%d\n", i + 1, menuItems[i].name, menuItems[i].price);
         }
         printf("5. View Cart\n");
         printf("6. Cancel Item\n");
@@ -163,8 +160,6 @@ void menu() {
         }
     }
 }
-
-// -------------------- MAIN PROGRAM --------------------
 int main() {
     char regPhone[20], regEmail[50], regUser[50], regPass[50], regAddress[100];
     char loginEmail[50], loginPass[50];
@@ -177,8 +172,6 @@ int main() {
     printf("\n2. Login");
     printf("\nEnter your choice: ");
     scanf("%d", &choice);
-
-    // -------------------- REGISTRATION --------------------
     if (choice == 1) {
         printf("\n----- REGISTRATION -----\n");
         printf("Enter Phone Number: ");
@@ -198,14 +191,18 @@ int main() {
             return 1;
         }
 
-        fprintf(fp, "%s\n%s\n%s\n%s\n%s\n",
-                regPhone, regEmail, regUser, regPass, regAddress);
+        fprintf(fp, "====================================\n");
+        fprintf(fp, "    USER REGISTRATION DETAILS\n");
+        fprintf(fp, "====================================\n\n");
+        fprintf(fp, "Username  : %s\n", regUser);
+        fprintf(fp, "Email     : %s\n", regEmail);
+        fprintf(fp, "Phone     : %s\n", regPhone);
+        fprintf(fp, "Address   : %s\n", regAddress);
+        fprintf(fp, "\n====================================\n\n");
         fclose(fp);
 
         printf("\nRegistration Successful!\n");
     }
-
-    // -------------------- LOGIN --------------------
     printf("\n----- LOGIN -----\n");
     printf("Enter Email: ");
     scanf("%s", loginEmail);
@@ -224,6 +221,21 @@ int main() {
 
     if (strcmp(loginEmail, regEmail) == 0 && strcmp(loginPass, regPass) == 0) {
         printf("\nSuccessfully Logged In!\n");
+        
+        // Append login details to user.txt
+        fp = fopen("user.txt", "a");
+        if (fp != NULL) {
+            fprintf(fp, "====================================\n");
+            fprintf(fp, "    LOGIN SESSION DETAILS\n");
+            fprintf(fp, "====================================\n\n");
+            fprintf(fp, "Username  : %s\n", regUser);
+            fprintf(fp, "Email     : %s\n", regEmail);
+            fprintf(fp, "Phone     : %s\n", regPhone);
+            fprintf(fp, "Address   : %s\n", regAddress);
+            fprintf(fp, "\n====================================\n\n");
+            fclose(fp);
+        }
+        
         menu();
     } else {
         printf("\nLogin Failed! Email or Password Incorrect.\n");
